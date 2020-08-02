@@ -1,3 +1,5 @@
+//package kalpi;
+
 import java.util.Vector;
 
 public class VotingSystem implements Runnable {
@@ -5,71 +7,74 @@ public class VotingSystem implements Runnable {
 	private  Queue securityGuardsQueue;
 	protected  Queue votingSystemsQueue;
 	protected  BoundedQueue policemenQueue;
-	protected static Vector <VoteTicket> VoteTickets;
-	protected static int index=0;
+	protected Vector <VoteTicket> VoteTickets;
 	public  boolean  kalpiIsOpen ;
 
-	//constructor
-	public VotingSystem (Queue votingSystemsQueue ,BoundedQueue policemenQueue ,Vector <VoteTicket>VoteTickets, Queue securityGuardsQueue) {
+
+	public VotingSystem (  Queue votingSystemsQueue , BoundedQueue policemenQueue , Vector <VoteTicket>VoteTickets ,  Queue securityGuardsQueue) {
 		this.votingSystemsQueue = votingSystemsQueue;
 		this.policemenQueue = policemenQueue;
-		kalpiIsOpen = true;
-		this.VoteTickets = VoteTickets;
+		kalpiIsOpen = true  ;
+		this.VoteTickets =  VoteTickets;
 		this.securityGuardsQueue = securityGuardsQueue;
 	}
 
-	//close the kalpi
 	public synchronized void setKalpiIsOpen() {
 		kalpiIsOpen=false;
 		notifyAll();
 	}
 
-	//
-	public static synchronized void createVoteTicket(Voter v) {
-		index++;
-		VoteTicket vt = new VoteTicket (index , v.id , v.age , v.mayorSelection , v.listSelection );
-		VoteTickets.add(vt);
-
-	}
-
-	//
-	public void votingProcess (Voter v) {
+	public void createVoteTicket (Voter v , int i) {
 		try {Thread.sleep(2000);} catch (InterruptedException e) {}
 		try {
 			double x = Math.random();
+			System.out.println("vs x= "+ x);
 			if (x>=0.2) {
-				createVoteTicket(v);
+				VoteTicket vt = new VoteTicket (i , v.id , v.age , v.mayorSelection , v.listSelection );
+				VoteTickets.add(vt);
 			}else 
 				throw new FailToCreateVoteTicketException ();
 		}catch(FailToCreateVoteTicketException e) {
-			System.err.println("Voting system didn't succeeded to create vote ticket, " + v.firstName + " " + v.lastName +" didn't vote!");
+			System.err.println("Voting system didn't succeeded to create vote ticket!");
 			policemenQueue.insertVoter(v);
 			v.setQueue(policemenQueue);
 		}
 	}
 
-	//run function
+
 	public void run() {
 		int i =0;
 		while(!votingSystemsQueue.isEmpty() || kalpiIsOpen==true || !securityGuardsQueue.isEmpty() ) {
 			Voter v= votingSystemsQueue.extractVoter();
+			System.out.println(v);
 			if( v!=null && !v.firstName.equals("closer2")) 
-				votingProcess(v);
+				createVoteTicket ( v ,  i);
 			if ( v!=null && v.firstName.equals("closer2")) { // closer go to the manager.
+				System.out.println("               while 1       colser 2 int the police");
 				policemenQueue.insertVoter(v);				
 			}
 			i++;
+			//System.out.println("kalpiIsOpen   vs = " + kalpiIsOpen);
 		}
+		
 		try {Thread.sleep(2000);} catch (InterruptedException e) {}
+
 		if (!votingSystemsQueue.isEmpty()) {
 			Voter v= votingSystemsQueue.extractVoter();
-			if ( v!=null && v.firstName.equals("closer2"))  // closer go to the manager.
+			if ( v!=null && v.firstName.equals("closer2")) { // closer go to the manager.
+				System.out.println("                if 2         colser 2 int the police");
 				policemenQueue.insertVoter(v);				
+			}
 		}
+		System.out.println("Vs dead");
+
 	}
 
-}
 
+
+
+
+}
 
 
 

@@ -1,3 +1,5 @@
+//package kalpi;
+
 import java.util.Vector;
 
 public class Manager implements Runnable{
@@ -5,9 +7,11 @@ public class Manager implements Runnable{
 	private  BoundedQueue managerQueue;
 	protected Vector <Integer> idVoters;
 	protected  Queue securityGuardsQueue;
-	public boolean  kalpiIsOpen; //true- open, false- close
+	public  boolean  kalpiIsOpen ;
 
-	//constructor
+
+
+
 	public Manager( BoundedQueue managerQueue , Vector <Integer> idVoters ,  Queue securityGuardsQueue) {
 		this.managerQueue = managerQueue;
 		this.securityGuardsQueue = securityGuardsQueue;
@@ -15,52 +19,59 @@ public class Manager implements Runnable{
 		kalpiIsOpen=true;
 	}
 
-	//checks if let the voter get in the kalpi
-	public void checkVoter(Voter v) {
+
+	public void checkAge(Voter v) {
+		if (v.firstName.equals("closer1"))
+			System.out.println("closer1 is in the manager !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 		double processTime = (Math.random()*3+3);
 		try {Thread.sleep((long) (processTime*1000));} catch (InterruptedException e) {}
 		double  x = Math.random();
+		System.out.println( "x = " + x);
 		if (x<=0.9 && v.getVoterAge()>=17 && kalpiIsOpen==true) {
-			sendToSecurityGuardsQueue(v); //the manager agreed to accept the voter
+			sendToSecurityGuardsQueue(v);
+			System.out.println("voter = " + v);
+			System.out.println("v queue after move to sec = " + v.currentQueue);
 			return;
 		}
-		v.setQueue(null); //the manager didn't agree to accept the voter
+		v.setQueue(null);
+		System.out.println("                     last voter = " + v);
+		System.out.println("                    v queue after move to null = " + v.currentQueue);
 	}
 
-	//send the voter back to the security guards queue
 	public void sendToSecurityGuardsQueue(Voter v) {
 		idVoters.add(v.getVoterId());
 		securityGuardsQueue.insertVoter(v);
 		v.setQueue(securityGuardsQueue);
 	}
 
-	//close the kalpi
 	public void setKalpiIsOpen() {
 		kalpiIsOpen=false;
+		//System.out.println("kalpiIsOpen = "+ kalpiIsOpen);
 	}
 
-	//the manager treats voters as long as the kalpi is open
-	public void workWhenKalpiIsOpen() {
+	public void run() {
 		while(kalpiIsOpen==true ) { 
 			Voter v= managerQueue.extractVoter();
-			if(v!=null) 
-				checkVoter(v);
+			if(v!=null) {
+				checkAge(v);
+			}
 		}
-	}
 
-	//the kalpi is closed. the manager send home all the voters
-	public void workWhenKalpiIsClose() {
-		while(!managerQueue.isEmpty() || !securityGuardsQueue.isEmpty())  
+		while(!managerQueue.isEmpty() || !securityGuardsQueue.isEmpty()) { // queues is empty ?  go home 
 			if(!managerQueue.isEmpty()) {
 				Voter v= managerQueue.extractVoter();
 				v.setQueue(null);
+				System.out.println(" xxxx last voter = " + v);
 			}
+		}
+
+
+
+
+		System.out.println("manager dead");
+
+
 	}
 
-	//run function
-	public void run() {
-		workWhenKalpiIsOpen();
-		workWhenKalpiIsClose();
-	}
 
 }
