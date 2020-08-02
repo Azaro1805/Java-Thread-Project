@@ -1,0 +1,127 @@
+import java.awt.EventQueue;
+
+import javax.swing.JFrame;
+import javax.swing.JButton;
+import java.awt.Font;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerNumberModel;
+import javax.swing.JTextField;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+
+public class Frame {
+
+	private JFrame frmKalfi;
+	private JTextField txtGuardsNumber;
+	private JTextField txtClosingTime;
+	
+	
+	public static void main(String[] args) { //Launch the application.
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					Frame window = new Frame();
+					window.frmKalfi.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	 
+	public Frame() {//Create the application
+		initialize();
+	}
+	
+
+	private void initialize() { // Initialize the contents of the frame
+		frmKalfi = new JFrame();
+		frmKalfi.setTitle("Kalfi");
+		frmKalfi.getContentPane().setFont(new Font("Alef", Font.BOLD, 18));
+		frmKalfi.setBounds(100, 100, 450, 300);
+		frmKalfi.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frmKalfi.getContentPane().setLayout(null);
+
+		JButton btnStart = new JButton("Start");
+		btnStart.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				try {
+					int guradsNumber = Integer.parseInt(txtGuardsNumber.getText());
+
+					if (guradsNumber < 1 || guradsNumber > 4) 
+					{
+						JOptionPane.showMessageDialog(null, "Guards number must between 1-4");
+					}
+					else
+					{
+						Double closingTime = Double.parseDouble(txtClosingTime.getText());
+
+						if (closingTime < 0)
+						{
+							JOptionPane.showMessageDialog(null, "Closing time is 0");
+							closingTime = 0.0;
+						}
+						else if (closingTime > 24)
+						{
+							JOptionPane.showMessageDialog(null, "Closing time is 24");
+							closingTime = 24.0;
+						}
+
+						Election e = new Election("C:\\Users\\ido01_000\\Desktop\\Assignment4\\id list.txt", "C:\\Users\\ido01_000\\Desktop\\Assignment4\\voters data.txt", guradsNumber, closingTime );						
+					}										
+				}
+				catch(NumberFormatException nfe) {
+					JOptionPane.showMessageDialog(null, "Input must be a number");
+				}
+				catch(Exception e)
+				{
+					JOptionPane.showMessageDialog(null, "There is an error in the eleection system");
+				}
+
+			}
+		});
+		btnStart.setFont(new Font("Calibri", Font.PLAIN, 18));
+		btnStart.setBounds(80, 202, 106, 32);
+		frmKalfi.getContentPane().add(btnStart);
+
+		JButton btnExit = new JButton("Exit");
+		btnExit.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				System.exit(0);
+			}
+		});
+		btnExit.setFont(new Font("Calibri", Font.PLAIN, 18));
+		btnExit.setBounds(248, 202, 106, 32);
+		frmKalfi.getContentPane().add(btnExit);
+
+		JLabel lblWelcome = new JLabel("Ben-Gurion Kalfi");
+		lblWelcome.setFont(new Font("Calibri", Font.BOLD, 24));
+		lblWelcome.setBounds(114, 11, 200, 51);
+		frmKalfi.getContentPane().add(lblWelcome);
+
+		JLabel lblNewLabel = new JLabel("Security Guards (1-4):");
+		lblNewLabel.setFont(new Font("Calibri", Font.PLAIN, 16));
+		lblNewLabel.setBounds(114, 74, 142, 32);
+		frmKalfi.getContentPane().add(lblNewLabel);
+
+		JLabel lblClosingTime = new JLabel("Closing Time (0-24):");
+		lblClosingTime.setFont(new Font("Calibri", Font.PLAIN, 16));
+		lblClosingTime.setBounds(114, 127, 142, 32);
+		frmKalfi.getContentPane().add(lblClosingTime);
+
+		txtGuardsNumber = new JTextField();
+		txtGuardsNumber.setFont(new Font("Calibri", Font.PLAIN, 16));
+		txtGuardsNumber.setBounds(266, 80, 46, 26);
+		frmKalfi.getContentPane().add(txtGuardsNumber);
+		txtGuardsNumber.setColumns(10);
+
+		txtClosingTime = new JTextField();
+		txtClosingTime.setFont(new Font("Calibri", Font.PLAIN, 16));
+		txtClosingTime.setColumns(10);
+		txtClosingTime.setBounds(266, 133, 46, 26);
+		frmKalfi.getContentPane().add(txtClosingTime);
+	}
+}
