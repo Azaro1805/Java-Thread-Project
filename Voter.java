@@ -1,9 +1,4 @@
-//package kalpi;
-
-import java.io.IOException;
-
 public class Voter implements Runnable{
-
 
 	protected int id ;
 	protected String firstName;
@@ -14,7 +9,7 @@ public class Voter implements Runnable{
 	protected long arrivalTime ;
 	protected Queue currentQueue;
 
-
+	//constructor
 	public Voter (String [] VoterData , Queue q) {
 		this.firstName= VoterData[0];
 		this.lastName= VoterData[1];
@@ -23,52 +18,42 @@ public class Voter implements Runnable{
 		this.mayorSelection=VoterData[4];
 		this.listSelection= VoterData[5];
 		this.arrivalTime= Integer.parseInt(VoterData[6]);
-		System.out.println("                                            " +firstName+ " "+ arrivalTime);
 		this.currentQueue=q;
 	}
 
-	public Voter (  String firstName , Queue q) {
+	//constructor
+	public Voter (String firstName , Queue q) {
 		this.firstName=firstName;
 		this.currentQueue=q;
 	}
 
+	//return the voter's age
 	protected int getVoterAge() {
 		return age;
 	}
 
+	//set the current queue of the voter (null represents home)
 	public void setQueue(Queue q) {
 		this.currentQueue=q;
 	}
 
+	//return the voter's ID
 	protected int getVoterId() {
 		return id;
 	}
 
+	//run function
 	public void run() {
-		
-		 
-			System.out.println(this.firstName+" "+ arrivalTime);
-			long x= arrivalTime*1000;
-			System.out.println("x"+firstName+ +x);
-			try {	Thread.sleep(x); } catch (Exception e) {}
-			//System.out.println("voter");
-			if (arrivalTime<=startGUI.durationTimeOfKalpi)
+		long x= arrivalTime*1000;
+		try {	Thread.sleep(x); } catch (Exception e) {}
+		if (arrivalTime<=MAIN.durationTimeOfKalpi)
 			currentQueue.insertVoter(this);
-			else setQueue(null);
-				
-		
-		System.out.println(this.firstName+ "Voter dead");
+		else setQueue(null);
 	}
 
-
+	//toString function- return the first and last name of the voter
 	public String toString () {
 		return firstName+" "+lastName;
 	}
-
-
-
-
-
-
 
 }
